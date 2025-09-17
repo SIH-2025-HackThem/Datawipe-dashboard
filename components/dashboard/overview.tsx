@@ -26,6 +26,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type RecentWipe = {
   id: string
@@ -54,7 +55,21 @@ const dailyThroughput = [
 ]
 
 export function DashboardOverview() {
+  const [loading, setLoading] = React.useState(true)
+  const [stats, setStats] = React.useState<{ totalWipes: number; scheduled: number; activeAgents: number; failures24: number; completionPercent?: number } | null>(null)
+  const [recentDevices, setRecentDevices] = React.useState<any[]>([])
+  const [connectedDevices, setConnectedDevices] = React.useState<any[]>([])
+  const [recentWipes, setRecentWipes] = React.useState<any[]>([])
   const completionPercent = 76
+
+  React.useEffect(() => {
+    fetch('/api/overview').then(r => r.json()).then(d => {
+      setStats(d.stats)
+      setRecentDevices(d.recentDevices || [])
+      setConnectedDevices(d.connectedDevices || [])
+      setRecentWipes(d.recentWipes || [])
+    }).finally(() => setLoading(false))
+  }, [])
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,7 +80,7 @@ export function DashboardOverview() {
             <CardDescription>Cumulative successful secure wipes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">1,248</div>
+            <div className="text-3xl font-bold">{loading ? <Skeleton className="h-7 w-16" /> : stats?.totalWipes ?? 0}</div>
           </CardContent>
           <CardFooter>
             <Badge variant="secondary">+4.2% this week</Badge>
@@ -78,7 +93,7 @@ export function DashboardOverview() {
             <CardDescription>Queued for execution</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">37</div>
+            <div className="text-3xl font-bold">{loading ? <Skeleton className="h-7 w-10" /> : stats?.scheduled ?? 0}</div>
           </CardContent>
           <CardFooter>
             <Badge>Auto-window 22:00 - 04:00</Badge>
@@ -91,7 +106,7 @@ export function DashboardOverview() {
             <CardDescription>Online wiping nodes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">14</div>
+            <div className="text-3xl font-bold">{loading ? <Skeleton className="h-7 w-10" /> : stats?.activeAgents ?? 0}</div>
           </CardContent>
           <CardFooter>
             <Badge variant="outline">2 updating</Badge>
@@ -104,7 +119,7 @@ export function DashboardOverview() {
             <CardDescription>Last 24h</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">3</div>
+            <div className="text-3xl font-bold">{loading ? <Skeleton className="h-7 w-10" /> : stats?.failures24 ?? 0}</div>
           </CardContent>
           <CardFooter>
             <Badge variant="destructive">Investigate</Badge>
@@ -144,14 +159,14 @@ export function DashboardOverview() {
           <CardContent>
             <div className="mb-2 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Progress</span>
-              <span className="text-sm font-medium">{completionPercent}%</span>
+              <span className="text-sm font-medium">{stats?.completionPercent ?? 0}%</span>
             </div>
-            <Progress value={completionPercent} />
+            <Progress value={stats?.completionPercent ?? 0} />
             <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
               <div className="text-muted-foreground">Completed</div>
-              <div className="justify-self-end font-medium">282</div>
+              <div className="justify-self-end font-medium">—</div>
               <div className="text-muted-foreground">Pending</div>
-              <div className="justify-self-end font-medium">88</div>
+              <div className="justify-self-end font-medium">—</div>
             </div>
           </CardContent>
         </Card>
@@ -174,27 +189,90 @@ export function DashboardOverview() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentWipesSeed.map((w) => (
+              {(loading ? [] : (recentWipes.length ? recentWipes : recentWipesSeed)).map((w: any) => (
                 <TableRow key={w.id}>
                   <TableCell>{w.id}</TableCell>
-                  <TableCell>{w.target}</TableCell>
+                  <TableCell>{w.device_id ?? w.target}</TableCell>
                   <TableCell>
-                    {w.status === 'Completed' && (
+                    {(w.status === 'completed' || w.status === 'Completed') && (
                       <Badge variant="secondary">{w.status}</Badge>
                     )}
-                    {w.status === 'In Progress' && <Badge>{w.status}</Badge>}
-                    {w.status === 'Failed' && (
+                    {(w.status === 'in_progress' || w.status === 'In Progress') && <Badge>{w.status}</Badge>}
+                    {(w.status === 'failed' || w.status === 'Failed') && (
                       <Badge variant="destructive">{w.status}</Badge>
                     )}
                   </TableCell>
-                  <TableCell>{w.sizeGb} GB</TableCell>
-                  <TableCell>{w.startedAt}</TableCell>
+                  <TableCell>{(w.size_gb ?? w.sizeGb) ?? 0} GB</TableCell>
+                  <TableCell>{new Date(w.started_at ?? w.startedAt).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
+              {loading && (
+                <TableRow>
+                  <TableCell colSpan={5}>
+                    <Skeleton className="h-6 w-full" />
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Devices</CardTitle>
+            <CardDescription>Newly seen devices in the last 24h</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="divide-y">
+              {(loading ? [] : (recentDevices.length ? recentDevices : [{ id: 'SRV-22', model: 'Dell R740', last_seen_at: new Date().toISOString() }, { id: 'LAP-18', model: 'Lenovo T14', last_seen_at: new Date().toISOString() }, { id: 'VM-33', model: 'Ubuntu 22.04', last_seen_at: new Date().toISOString() }])).map((d: any) => (
+                <div key={d.id} className="flex items-center justify-between py-3">
+                  <div>
+                    <div className="font-medium">{d.id}</div>
+                    <div className="text-xs text-muted-foreground">{d.model ?? 'Unknown model'}</div>
+                  </div>
+                  <Badge variant="outline">{new Date(d.last_seen_at).toLocaleTimeString()}</Badge>
+                </div>
+              ))}
+              {loading && (
+                <div className="py-3">
+                  <Skeleton className="h-5 w-full" />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Connected Devices</CardTitle>
+            <CardDescription>Click a device to view details</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="divide-y">
+              {(loading ? [] : (connectedDevices.length ? connectedDevices : [{ id: 'SRV-12', model: 'Dell R730', status: 'Online' }, { id: 'SRV-19', model: 'HP DL380', status: 'Online' }, { id: 'LAP-07', model: 'MacBook Pro', status: 'Busy' }])).map((d: any) => (
+                <a key={d.id} href={`/dashboard/devices/${encodeURIComponent(d.id)}`} className="flex items-center justify-between py-3 hover:opacity-90">
+                  <div>
+                    <div className="font-medium">{d.id}</div>
+                    <div className="text-xs text-muted-foreground">{d.model ?? 'Unknown model'}</div>
+                  </div>
+                  {d.status === 'Online' ? (
+                    <Badge variant="secondary">Online</Badge>
+                  ) : (
+                    <Badge>Busy</Badge>
+                  )}
+                </a>
+              ))}
+              {loading && (
+                <div className="py-3">
+                  <Skeleton className="h-5 w-full" />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
