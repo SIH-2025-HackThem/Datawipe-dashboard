@@ -1,11 +1,13 @@
 "use client"
 import { useState, useEffect } from "react"
+import Link from "next/link"
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 import Hero from "@/components/home/hero"
 import Features from "@/components/features"
 import { TestimonialsSection } from "@/components/testimonials"
 import { NewReleasePromo } from "@/components/new-release-promo"
 import { FAQSection } from "@/components/faq-section"
-import { PricingSection } from "@/components/pricing-section"
+import { DownloadSection } from "@/components/download-section"
 import { StickyFooter } from "@/components/sticky-footer"
 
 export default function Home() {
@@ -84,7 +86,7 @@ export default function Home() {
            >
           
          </svg> */}
-         <img src="/public/broom.svg"></img>
+         <img src="/eraser.png  " alt="Broom" className="text-foreground rounded-full size-8 w-8"></img>
         </a>
 
         <div className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-muted-foreground transition duration-200 hover:text-foreground md:flex md:space-x-2">
@@ -111,7 +113,7 @@ export default function Home() {
             className="relative px-4 py-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             onClick={(e) => {
               e.preventDefault()
-              const element = document.getElementById("pricing")
+              const element = document.getElementById("download")
               if (element) {
                 const headerOffset = 120 // Account for sticky header height + margin
                 const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
@@ -124,7 +126,7 @@ export default function Home() {
               } 
             }}
           >
-            <span className="relative z-20">Dashboard</span>
+            <span className="relative z-20">Download</span>
           </a>
           {/* <a
             className="relative px-4 py-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -167,19 +169,28 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-4">
-          <a
-            href="/login"
-            className="font-medium transition-colors hover:text-foreground text-muted-foreground text-sm cursor-pointer"
-          >
-            Log In
-          </a>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="font-medium transition-colors hover:text-foreground text-muted-foreground text-sm cursor-pointer">
+                Log In
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="rounded-md font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-4 py-2 text-sm">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </SignedOut>
 
-          <a
-            href="/signup"
-            className="rounded-md font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-4 py-2 text-sm"
-          >
-            Sign Up
-          </a>
+          <SignedIn>
+            <Link
+              href="/dashboard"
+              className="rounded-md font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-4 py-2 text-sm"
+            >
+              Go to Dashboard
+            </Link>
+            <UserButton afterSignOutUrl="/" appearance={{ elements: { userButtonAvatarBox: "w-8 h-8" } }} />
+          </SignedIn>
         </div>
       </header>
 
@@ -234,10 +245,10 @@ export default function Home() {
                 Features
               </button>
               <button
-                onClick={() => handleMobileNavClick("pricing")}
+                onClick={() => handleMobileNavClick("download")}
                 className="text-left px-4 py-3 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-background/50"
               >
-                Pricing
+                Download
               </button>
               <button
                 onClick={() => handleMobileNavClick("testimonials")}
@@ -252,18 +263,26 @@ export default function Home() {
                 FAQ
               </button>
               <div className="border-t border-border/50 pt-4 mt-4 flex flex-col space-y-3">
-                <a
-                  href="/login"
-                  className="px-4 py-3 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-background/50 cursor-pointer"
-                >
-                  Log In
-                </a>
-                <a
-                  href="/signup"
-                  className="px-4 py-3 text-lg font-bold text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground rounded-lg shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-                >
-                  Sign Up
-                </a>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="px-4 py-3 text-lg font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-background/50 text-left">
+                      Log In
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="px-4 py-3 text-lg font-bold text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground rounded-lg shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                      Sign Up
+                    </button>
+                  </SignUpButton>
+                </SignedOut>
+                <SignedIn>
+                  <Link href="/dashboard" className="px-4 py-3 text-lg font-bold text-center bg-gradient-to-b from-primary to-primary/80 text-primary-foreground rounded-lg shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                    Go to Dashboard
+                  </Link>
+                  <div className="px-4 py-2">
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                </SignedIn>
               </div>
             </nav>
           </div>
@@ -278,9 +297,9 @@ export default function Home() {
         <Features />
       </div>
 
-      {/* Pricing Section */}
-      <div id="pricing">
-        <PricingSection />
+      {/* Download Section */}
+      <div id="download">
+        <DownloadSection />
       </div>
 
       {/* Testimonials Section */}

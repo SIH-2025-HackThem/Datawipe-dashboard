@@ -6,41 +6,47 @@ import { useState } from "react"
 
 const pricingPlans = [
   {
-    name: "Starter",
-    price: "Free",
-    description: "Perfect for getting started with v0",
-    features: ["5 components per month", "Basic templates", "Community support", "Standard components"],
+    name: "Individual",
+    monthlyPrice: 19,
+    annualPrice: 15,
+    description: "For personal devices and one-off wipes",
+    features: [
+      "N-pass wipe for 3 devices/month",
+      "NIST 800-88 compliant presets",
+      "Local verification report (PDF)",
+      "Email support",
+    ],
     popular: false,
     cta: "Get Started",
   },
   {
     name: "Pro",
-    monthlyPrice: 29,
-    annualPrice: 24,
-    description: "For professionals building serious projects",
+    monthlyPrice: 49,
+    annualPrice: 39,
+    description: "For IT admins and small teams",
     features: [
-      "Unlimited components",
-      "Premium templates",
+      "Unlimited wipes",
+      "Remote wipe & scheduling",
+      "Signed certificates of destruction",
+      "Tamper-evident audit logs",
+      "Hardware-aware SSD/NVMe/HDD methods",
       "Priority support",
-      "Advanced animations",
-      "Custom themes",
-      "Export to GitHub",
     ],
     popular: true,
-    cta: "Start Free Trial",
+    cta: "Start 14-day Trial",
   },
   {
-    name: "Team",
-    monthlyPrice: 99,
-    annualPrice: 79,
-    description: "For teams collaborating on projects",
+    name: "Enterprise",
+    monthlyPrice: 149,
+    annualPrice: 119,
+    description: "For security teams at scale",
     features: [
       "Everything in Pro",
-      "Team collaboration",
-      "Shared component library",
-      "Advanced analytics",
-      "Custom integrations",
-      "Dedicated support",
+      "Role-based access & approvals",
+      "SAML/SCIM, SIEM export",
+      "On-prem or air-gapped deployment",
+      "Custom retention & policy engine",
+      "Dedicated success manager",
     ],
     popular: false,
     cta: "Contact Sales",
@@ -73,11 +79,11 @@ export function PricingSection() {
           </motion.div>
 
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent mb-4">
-            Choose your plan
+            Simple, transparent pricing
           </h2>
 
           <p className="text-lg text-white/60 max-w-2xl mx-auto mb-8">
-            Start building beautiful components today. Upgrade anytime as your needs grow.
+            Pay for secure, verified wipes—scale to fleets when you’re ready.
           </p>
 
           {/* Monthly/Annual Toggle */}
