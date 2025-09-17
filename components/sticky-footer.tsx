@@ -83,7 +83,7 @@ export function StickyFooter() {
               </ul>
               <ul className="space-y-2">
                 <li className="hover:underline transition-colors" style={{ color: "#121113" }}>
-                  <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                  <a href="https://github.com/SIH-2025-HackThem/Datawipe-dashboard" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
                     Github
                   </a>
                 </li>
