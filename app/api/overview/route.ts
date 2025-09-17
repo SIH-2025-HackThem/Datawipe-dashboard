@@ -3,7 +3,18 @@ import { getSupabaseClient } from '@/lib/supabase'
 
 export async function GET() {
   try {
-    const sb = getSupabaseClient()
+    let sb
+    try {
+      sb = getSupabaseClient()
+    } catch (e) {
+      // Env not configured – return safe fallbacks so UI can render seeds
+      return NextResponse.json({
+        stats: { totalWipes: 0, scheduled: 0, activeAgents: 0, failures24: 0, completionPercent: 0 },
+        recentDevices: [],
+        recentWipes: [],
+        connectedDevices: [],
+      })
+    }
 
     const sinceIso = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
     const [wipes24Res, totalCountRes, scheduledCountRes, failures24Res, devicesRes, recentWipesRes] = await Promise.all([
@@ -15,15 +26,15 @@ export async function GET() {
       sb.from('wipes').select('id, device_id, status, size_gb, started_at').order('started_at', { ascending: false }).limit(10),
     ])
 
-    const totalCount = (totalCountRes as any).count ?? 0
-    const scheduledCount = (scheduledCountRes as any).count ?? 0
-    const devices = devicesRes.data || []
-    const recentWipes = recentWipesRes.data || []
+    const totalCount = (totalCountRes as any)?.count ?? 0
+    const scheduledCount = (scheduledCountRes as any)?.count ?? 0
+    const devices = (devicesRes as any)?.data || []
+    const recentWipes = (recentWipesRes as any)?.data || []
 
     const activeAgents = devices.length
-    const failures24 = (failures24Res.data || []).length
+    const failures24 = ((failures24Res as any)?.data || []).length
     const completedCountRes = await sb.from('wipes').select('*', { count: 'exact', head: true }).eq('status', 'completed')
-    const completedCount = (completedCountRes as any).count ?? 0
+    const completedCount = (completedCountRes as any)?.count ?? 0
     const completionPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
 
     return NextResponse.json({
@@ -39,7 +50,12 @@ export async function GET() {
       connectedDevices: devices.slice(0, 5),
     })
   } catch (e) {
-    return NextResponse.json({ error: 'Failed to load overview' }, { status: 500 })
+    return NextResponse.json({
+      stats: { totalWipes: 0, scheduled: 0, activeAgents: 0, failures24: 0, completionPercent: 0 },
+      recentDevices: [],
+      recentWipes: [],
+      connectedDevices: [],
+    })
   }
 }
 
