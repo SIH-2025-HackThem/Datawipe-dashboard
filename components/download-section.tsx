@@ -36,7 +36,7 @@ export function DownloadSection() {
           >
             <h3 className="text-white font-semibold mb-2">Install via package</h3>
             <p className="text-white/60 text-sm mb-4">Debian/Ubuntu</p>
-            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto">
+            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto no-scrollbar">
 sudo dpkg -i wipe-suite_latest_amd64.deb
 sudo apt -f install
             </pre>
@@ -54,7 +54,7 @@ sudo apt -f install
           >
             <h3 className="text-white font-semibold mb-2">Install via script</h3>
             <p className="text-white/60 text-sm mb-4">Any modern Linux</p>
-            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto">
+            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto no-scrollbar">
 curl -fsSL https://download.wipesuite.sh/install.sh | bash
             </pre>
             <div className="flex items-center gap-2 text-white/70 text-sm mt-4">
@@ -71,7 +71,7 @@ curl -fsSL https://download.wipesuite.sh/install.sh | bash
           >
             <h3 className="text-white font-semibold mb-2">Bootable ISO (USB)</h3>
             <p className="text-white/60 text-sm mb-4">Wipe HDDs/SSDs from a clean, offline environment</p>
-            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto">
+            <pre className="bg-black/50 border border-white/10 rounded-xl p-4 text-white text-xs sm:text-sm overflow-x-auto no-scrollbar">
 # Linux/macOS (replace sdX with your USB device)
 sudo dd if=wipe-suite.iso of=/dev/sdX bs=4M status=progress conv=fsync
 

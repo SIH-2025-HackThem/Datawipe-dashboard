@@ -184,6 +184,15 @@ body {
   }
 }
 
+/* Hide scrollbars cross-browser */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* Added marquee animations for testimonials section */
 @keyframes marquee {
   from {

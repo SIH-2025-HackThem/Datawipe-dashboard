@@ -50,80 +50,43 @@ export function StickyFooter() {
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               <ul className="space-y-2">
-                <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "rgba(18, 17, 19, 0.8)"
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "#121113"
-                  }}
-                >
-                  Home
+                <li className="hover:underline transition-colors" style={{ color: "#121113" }}>
+                  <a
+                    href="#top"
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      window.scrollTo({ top: 0, behavior: "smooth" })
+                    }}
+                  >
+                    Home
+                  </a>
                 </li>
-                <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "rgba(18, 17, 19, 0.8)"
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "#121113"
-                  }}
-                >
-                  Docs
+                <li className="hover:underline transition-colors" style={{ color: "#121113" }}>
+                  <a
+                    href="#features"
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const el = document.getElementById("features")
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth", block: "start" })
+                      }
+                    }}
+                  >
+                    Docs
+                  </a>
                 </li>
-                <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "rgba(18, 17, 19, 0.8)"
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "#121113"
-                  }}
-                >
-                  Dashboard
+                <li className="hover:underline transition-colors" style={{ color: "#121113" }}>
+                  <a href="/dashboard" className="cursor-pointer">Dashboard</a>
                 </li>
               </ul>
               <ul className="space-y-2">
-                <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "rgba(18, 17, 19, 0.8)"
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.currentTarget as HTMLLIElement
-                    target.style.color = "#121113"
-                  }}
-                >
-                  Github
+                <li className="hover:underline transition-colors" style={{ color: "#121113" }}>
+                  <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                    Github
+                  </a>
                 </li>
-                {/* <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => (e.target.style.color = "rgba(18, 17, 19, 0.8)")}
-                  onMouseLeave={(e) => (e.target.style.color = "#121113")}
-                >
-                  Twitter
-                </li>
-                <li
-                  className="hover:underline cursor-pointer transition-colors"
-                  style={{ color: "#121113" }}
-                  onMouseEnter={(e) => (e.target.style.color = "rgba(18, 17, 19, 0.8)")}
-                  onMouseLeave={(e) => (e.target.style.color = "#121113")}
-                >
-                  Discord
-                </li> */}
               </ul>
             </motion.div>
             <motion.h2

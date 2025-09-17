@@ -166,12 +166,12 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, delay: 0.4 }}
         >
-          <Link prefetch={false} href="/docs/introduction">
+          <Link prefetch={false} href="/signup">
             <Button className="bg-gradient-to-b from-rose-500 to-rose-700 text-sm text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]">
               Get started
             </Button>
           </Link>
-          <Link prefetch={false} href="/about">
+          <Link prefetch={false} href="#features">
             <Button variant={"secondary"}>
               About <MoveRight className="ml-2 h-4 w-4" />
             </Button>

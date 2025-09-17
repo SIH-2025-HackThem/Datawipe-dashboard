@@ -166,7 +166,8 @@ export function PricingSection() {
                 ))}
               </ul>
 
-              <motion.button
+              <motion.a
+                href={plan.cta === "Contact Sales" ? "mailto:sales@wipesuite.sh?subject=Enterprise%20Inquiry" : "/signup"}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
@@ -176,7 +177,7 @@ export function PricingSection() {
                 }`}
               >
                 {plan.cta}
-              </motion.button>
+              </motion.a>
             </motion.div>
           ))}
         </div>
@@ -190,13 +191,14 @@ export function PricingSection() {
           className="text-center mt-16"
         >
           <p className="text-white/60 mb-4">Need a custom solution? We're here to help.</p>
-          <motion.button
+          <motion.a
+            href="mailto:sales@wipesuite.sh?subject=Custom%20solution%20inquiry"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="text-[#e78a53] hover:text-[#e78a53]/80 font-medium transition-colors"
           >
             Contact our sales team →
-          </motion.button>
+          </motion.a>
         </motion.div>
       </div>
     </section>
