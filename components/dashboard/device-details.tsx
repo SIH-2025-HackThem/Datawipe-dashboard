@@ -139,51 +139,18 @@ export default function DeviceDetails({ deviceId }: { deviceId: string }) {
                     }
                   } catch {}
 
-                  // Dynamic import jsPDF to avoid SSR issues
-                  const { jsPDF } = await import('jspdf')
-                  const doc = new jsPDF()
-                  let y = 15
-                  doc.setFontSize(16)
-                  doc.text('Wipe Certificate', 14, y)
-                  y += 10
-                  doc.setFontSize(11)
-                  doc.text(`Device: ${deviceId}`, 14, y)
-                  y += 7
-                  doc.text(`Generated: ${new Date().toLocaleString()}`, 14, y)
-                  y += 7
-                  doc.text('Verification (SHA-256 of JSON payload):', 14, y)
-                  y += 6
-                  // Wrap hash text
-                  const hashLines = doc.splitTextToSize(hashHex, 180)
-                  doc.text(hashLines, 14, y)
-                  y += hashLines.length * 6 + 4
-
-                  if (signatureHex) {
-                    doc.setFontSize(12)
-                    doc.text('Server Signature (Ed25519, hex):', 14, y)
-                    y += 6
-                    const sigLines = doc.splitTextToSize(signatureHex, 180)
-                    doc.text(sigLines, 14, y)
-                    y += sigLines.length * 6 + 4
+                  // Generate professional PDF using custom template
+                  const { generateWipeCertificatePDF } = await import('@/lib/pdf-template')
+                  
+                  const certificateData = {
+                    deviceId,
+                    generatedAt: new Date(),
+                    hashHex,
+                    signatureHex: signatureHex || undefined,
+                    history
                   }
-
-                  doc.setFontSize(12)
-                  doc.text('Wipe History:', 14, y)
-                  y += 8
-                  doc.setFontSize(10)
-                  if (history.length === 0) {
-                    doc.text('No prior wipes recorded.', 14, y)
-                  } else {
-                    history.slice(0, 12).forEach((h) => {
-                      const line = `${h.when}  •  ${h.sizeGb} GB  •  ${h.passes} passes`
-                      if (y > 280) {
-                        doc.addPage(); y = 15
-                      }
-                      doc.text(line, 14, y)
-                      y += 6
-                    })
-                  }
-
+                  
+                  const doc = generateWipeCertificatePDF(certificateData)
                   doc.save(`wipe-certificate-${deviceId}.pdf`)
                 } catch (e) {
                   console.error(e)
