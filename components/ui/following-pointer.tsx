@@ -20,14 +20,14 @@ export const FollowerPointerCard = ({
   const [isInside, setIsInside] = useState<boolean>(false)
 
   useEffect(() => {
-    console.log("[v0] FollowerPointerCard mounted")
+    console.log("[SwiftWipe] FollowerPointerCard mounted")
     return () => {
-      console.log("[v0] FollowerPointerCard unmounted")
+      console.log("[SwiftWipe] FollowerPointerCard unmounted")
     }
   }, [])
 
   useEffect(() => {
-    console.log("[v0] isInside changed:", isInside)
+    console.log("[SwiftWipe] isInside changed:", isInside)
   }, [isInside])
 
   useEffect(() => {

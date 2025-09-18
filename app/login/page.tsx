@@ -20,7 +20,7 @@ export default function LoginPage() {
     // Simulate login process
     await new Promise((resolve) => setTimeout(resolve, 1000))
     setIsLoading(false)
-    console.log("[v0] Login attempt:", { email, password })
+    console.log("[SwiftWipe] Login attempt:", { email, password })
   }
 
   return (

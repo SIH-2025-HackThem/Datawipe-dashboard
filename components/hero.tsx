@@ -51,7 +51,7 @@ export default function Hero() {
 
   const cards = [
     {
-      title: "V0 Compatible",
+      title: "SwiftWipe Compatible",
       description: "Edit and customize visually, instantly.",
       icon: <CloudLightning className="h-full w-full" />,
       variant: "rose",

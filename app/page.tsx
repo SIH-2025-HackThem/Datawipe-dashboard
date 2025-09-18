@@ -72,7 +72,7 @@ export default function Home() {
           className={`z-50 flex items-center justify-center gap-2 transition-all duration-300 ${
             isScrolled ? "ml-4" : ""
           }`}
-          href="https://v0.app"
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -198,7 +198,7 @@ export default function Home() {
       <header className="sticky top-4 z-[9999] mx-4 flex w-auto flex-row items-center justify-between rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg md:hidden px-4 py-3">
         <a
           className="flex items-center justify-center gap-2"
-          href="https://v0.app"
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
         >
