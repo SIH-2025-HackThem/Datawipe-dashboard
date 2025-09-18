@@ -49,6 +49,7 @@
     "cmdk": "1.0.4",
     "cobe": "latest",
     "date-fns": "4.1.0",
+    "dotenv": "^17.2.2",
     "embla-carousel-react": "8.5.1",
     "framer-motion": "latest",
     "geist": "latest",

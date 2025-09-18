@@ -60,15 +60,33 @@ export function DashboardOverview() {
   const [recentDevices, setRecentDevices] = React.useState<any[]>([])
   const [connectedDevices, setConnectedDevices] = React.useState<any[]>([])
   const [recentWipes, setRecentWipes] = React.useState<any[]>([])
-  const completionPercent = 76
+  const [weeklyThroughput, setWeeklyThroughput] = React.useState<any[]>([])
 
   React.useEffect(() => {
-    fetch('/api/overview').then(r => r.json()).then(d => {
-      setStats(d.stats)
-      setRecentDevices(d.recentDevices || [])
-      setConnectedDevices(d.connectedDevices || [])
-      setRecentWipes(d.recentWipes || [])
-    }).finally(() => setLoading(false))
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/overview')
+        const data = await response.json()
+        
+        setStats(data.stats)
+        setRecentDevices(data.recentDevices || [])
+        setConnectedDevices(data.connectedDevices || [])
+        setRecentWipes(data.recentWipes || [])
+        setWeeklyThroughput(data.weeklyThroughput || dailyThroughput)
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+        // Fallback to seed data on error
+        setStats({ totalWipes: 0, scheduled: 0, activeAgents: 0, failures24: 0, completionPercent: 0 })
+        setRecentDevices([])
+        setConnectedDevices([])
+        setRecentWipes([])
+        setWeeklyThroughput(dailyThroughput)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
   }, [])
 
   return (
@@ -139,7 +157,7 @@ export function DashboardOverview() {
                 wipes: { label: 'Wipes', color: 'hsl(var(--primary))' },
               }}
             >
-              <LineChart data={dailyThroughput} margin={{ left: 12, right: 12 }}>
+              <LineChart data={weeklyThroughput} margin={{ left: 12, right: 12 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" tickLine={false} axisLine={false} />
                 <YAxis allowDecimals={false} width={30} tickLine={false} axisLine={false} />
@@ -164,9 +182,9 @@ export function DashboardOverview() {
             <Progress value={stats?.completionPercent ?? 0} />
             <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
               <div className="text-muted-foreground">Completed</div>
-              <div className="justify-self-end font-medium">—</div>
+              <div className="justify-self-end font-medium">{stats?.totalWipes ? Math.round((stats.totalWipes * (stats.completionPercent ?? 0)) / 100) : 0}</div>
               <div className="text-muted-foreground">Pending</div>
-              <div className="justify-self-end font-medium">—</div>
+              <div className="justify-self-end font-medium">{stats?.totalWipes ? Math.round((stats.totalWipes * (100 - (stats.completionPercent ?? 0))) / 100) : 0}</div>
             </div>
           </CardContent>
         </Card>
@@ -226,7 +244,7 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent>
             <div className="divide-y">
-              {(loading ? [] : (recentDevices.length ? recentDevices : [{ id: 'SRV-22', model: 'Dell R740', last_seen_at: new Date().toISOString() }, { id: 'LAP-18', model: 'Lenovo T14', last_seen_at: new Date().toISOString() }, { id: 'VM-33', model: 'Ubuntu 22.04', last_seen_at: new Date().toISOString() }])).map((d: any) => (
+              {(loading ? [] : (recentDevices.length ? recentDevices : [])).map((d: any) => (
                 <div key={d.id} className="flex items-center justify-between py-3">
                   <div>
                     <div className="font-medium">{d.id}</div>
@@ -235,6 +253,11 @@ export function DashboardOverview() {
                   <Badge variant="outline">{new Date(d.last_seen_at).toLocaleTimeString()}</Badge>
                 </div>
               ))}
+              {!loading && recentDevices.length === 0 && (
+                <div className="py-3 text-center text-sm text-muted-foreground">
+                  No recent devices found
+                </div>
+              )}
               {loading && (
                 <div className="py-3">
                   <Skeleton className="h-5 w-full" />
@@ -251,7 +274,7 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent>
             <div className="divide-y">
-              {(loading ? [] : (connectedDevices.length ? connectedDevices : [{ id: 'SRV-12', model: 'Dell R730', status: 'Online' }, { id: 'SRV-19', model: 'HP DL380', status: 'Online' }, { id: 'LAP-07', model: 'MacBook Pro', status: 'Busy' }])).map((d: any) => (
+              {(loading ? [] : (connectedDevices.length ? connectedDevices : [])).map((d: any) => (
                 <a key={d.id} href={`/dashboard/devices/${encodeURIComponent(d.id)}`} className="flex items-center justify-between py-3 hover:opacity-90">
                   <div>
                     <div className="font-medium">{d.id}</div>
@@ -260,10 +283,15 @@ export function DashboardOverview() {
                   {d.status === 'Online' ? (
                     <Badge variant="secondary">Online</Badge>
                   ) : (
-                    <Badge>Busy</Badge>
+                    <Badge variant="outline">Offline</Badge>
                   )}
                 </a>
               ))}
+              {!loading && connectedDevices.length === 0 && (
+                <div className="py-3 text-center text-sm text-muted-foreground">
+                  No connected devices found
+                </div>
+              )}
               {loading && (
                 <div className="py-3">
                   <Skeleton className="h-5 w-full" />
